@@ -103,9 +103,7 @@ pipeline {
             steps {
 
                 script {
-                    sh 'docker image build -t $JOB_NAME:v1.$BUILD_ID .'
-                    sh 'docker image tag $JOB_NAME:v1.$BUILD_ID 9642908704/$JOB_NAME:v1.$BUILD_ID'
-                    sh 'docker image tag $JOB_NAME:v1.$BUILD_ID 9642908704/$JOB_NAME:latest'
+                    sh 'docker  build -t nexusimage1 .'
                 }
             }
         }
