@@ -1,73 +1,103 @@
-pipeline{
-    
-    agent any 
-    
+pipeline {
+    agent any
+
     stages {
         
-        stage('Git Checkout'){
+        stage('Git Checkout') {
             
-            steps{
-                
-                script{
-                    
-                    git branch: 'main', url: 'https://github.com/vikash-kumar01/mrdevops_javaapplication.git'
-                }
+            steps {
+               
+               script {
+                   git branch: 'main', url: 'https://github.com/Raghava0684/Jenkins-Nexus-Project.git'
+               }
             }
         }
-        stage('UNIT testing'){
+        
+        stage ('Unit Testing') {
             
-            steps{
+            steps {
                 
-                script{
-                    
+                script {
                     sh 'mvn test'
                 }
             }
         }
-        stage('Integration testing'){
+        
+        stage ('Integration Testing') {
             
-            steps{
+            steps {
                 
-                script{
-                    
+                script {
                     sh 'mvn verify -DskipUnitTests'
                 }
             }
         }
-        stage('Maven build'){
+        
+        stage ('maven Build') {
             
-            steps{
+            steps {
                 
-                script{
-                    
+                script {
                     sh 'mvn clean install'
                 }
             }
         }
-        stage('Static code analysis'){
+        
+        stage ('Static Code Analysis') {
             
-            steps{
+            steps {
                 
-                script{
-                    
-                    withSonarQubeEnv(credentialsId: 'sonar-api') {
-                        
-                        sh 'mvn clean package sonar:sonar'
-                    }
-                   }
-                    
+                script {
+                
+                withSonarQubeEnv(credentialsId: 'Sonarqube-Secret') {
+            
+                 sh 'mvn clean package sonar:sonar'
                 }
             }
-            stage('Quality Gate Status'){
+            
+            }
+        }
+        
+        stage ('Quality Gate status') {
+            
+            steps {
                 
-                steps{
+                script {
                     
-                    script{
-                        
-                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
-                    }
+                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonarqube-Secret'
                 }
             }
         }
         
+        stage ('upoad war file  in to nexus') {
+            
+            
+            steps {
+                
+                script {
+                   
+                   def readPomVersion = readMavenPom file: 'pom.xml'
+                   
+                   
+                   nexusArtifactUploader artifacts:
+                   [
+                       [
+                           artifactId: 'springboot', 
+                           classifier: '', file: 'target/Uber.jar', 
+                           type: 'jar'
+                        ]
+                    ], 
+                    credentialsId: 'Nexus-Credentials', 
+                    groupId: 'com.example', 
+                    nexusUrl: '54.183.200.89:8081', 
+                    nexusVersion: 'nexus3', 
+                    protocol: 'http', 
+                    repository: "java-app-release", 
+                    version: "${readPomVersion.version}"
+                }
+            }
+        }
+        
+}
+
 }
