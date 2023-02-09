@@ -110,7 +110,7 @@ pipeline {
             }
         }
 
-        stage {
+        stage ('Push Image to Docker-hub') {
 
             steps {
                 
@@ -118,7 +118,7 @@ pipeline {
 
                     sh 'docker login -u 9642908704 -p 168B5A0302'
                     sh 'docker push 9642908704/nexusimage:latest'
-                    
+
                 }
             }
         }
