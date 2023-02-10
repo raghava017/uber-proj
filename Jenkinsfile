@@ -104,7 +104,7 @@ pipeline {
 
                 script {
 
-                    sh 'docker  build -t raghav0617/nexusimage .'
+                    sh 'docker  build -t raghav0617/jenkinsnexusimage .'
 
                 }
             }
@@ -117,7 +117,7 @@ pipeline {
                 script {
 
                     sh 'docker login -u raghav0617 -p 168B5A0302'
-                    sh 'docker push raghav0617/nexusimage:latest'
+                    sh 'docker push raghav0617/jenkinsnexusimage:latest'
 
                 }
             }
